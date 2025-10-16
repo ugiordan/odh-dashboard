@@ -68,6 +68,7 @@ import {
 import { hardwareProfileSection } from '#~/__tests__/cypress/cypress/pages/components/HardwareProfileSection';
 import { STOP_MODAL_PREFERENCE_KEY } from '#~/pages/modelServing/useStopModalPreference';
 import { mockOdhApplication } from '#~/__mocks__/mockOdhApplication';
+import { DataScienceStackComponent } from '#~/concepts/areas/types';
 
 type HandlersProps = {
   disableKServeConfig?: boolean;
@@ -137,8 +138,11 @@ const initIntercepts = ({
   cy.interceptOdh(
     'GET /api/dsc/status',
     mockDscStatus({
-      components: DscComponents,
-      installedComponents: { kserve: true, 'model-mesh': true },
+      components: {
+        [DataScienceStackComponent.K_SERVE]: { managementState: 'Managed' },
+        [DataScienceStackComponent.MODEL_MESH_SERVING]: { managementState: 'Managed' },
+        ...DscComponents,
+      },
     }),
   );
   cy.interceptOdh(

@@ -999,28 +999,19 @@ export enum KnownLabels {
   LABEL_SELECTOR_MODEL_REGISTRY = 'component=model-registry',
   KUEUE_MANAGED = 'kueue.openshift.io/managed',
 }
-
-type ComponentNames =
-  | 'codeflare'
-  | 'data-science-pipelines-operator'
-  | 'kserve'
-  | 'model-mesh'
-  // Bug: https://github.com/opendatahub-io/opendatahub-operator/issues/641
-  | 'odh-dashboard'
-  | 'ray'
-  | 'workbenches';
-
 export type DataScienceClusterKindStatus = {
   components?: {
-    modelregistry?: {
-      registriesNamespace?: string;
-    };
-    workbenches?: {
-      workbenchNamespace?: string;
+    [key: string]: {
+      managementState?: 'Managed' | 'Removed';
+      registriesNamespace?: string;  // for modelregistry
+      workbenchNamespace?: string;   // for workbenches
+      releases?: Array<{
+        name: string;
+        version?: string;
+      }>;
     };
   };
   conditions: K8sCondition[];
-  installedComponents: { [key in ComponentNames]?: boolean };
   phase?: string;
   release?: {
     name: string;

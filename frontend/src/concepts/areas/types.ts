@@ -4,6 +4,7 @@ import {
   DashboardConfigKind,
   DataScienceClusterInitializationKindStatus,
   DataScienceClusterKindStatus,
+  DataScienceClusterComponentStatus,
 } from '#~/k8sTypes';
 
 export type FeatureFlag = keyof DashboardCommonConfig;
@@ -15,7 +16,7 @@ export type IsAreaAvailableStatus = {
   devFlags: { [key in string]?: 'on' | 'off' } | null; // simplified. `disableX` flags are weird to read
   featureFlags: { [key in FeatureFlag]?: 'on' | 'off' } | null; // simplified. `disableX` flags are weird to read
   reliantAreas: { [key in SupportedAreaType]?: boolean } | null; // only needs 1 to be true
-  requiredComponents: { [key in StackComponent]?: boolean } | null;
+  requiredComponents: { [key in DataScienceStackComponent]?: DataScienceClusterComponentStatus } | null;
   requiredCapabilities: { [key in StackCapability]?: boolean } | null;
   customCondition: (conditionFunc: CustomConditionFunction) => boolean;
 };
@@ -89,23 +90,6 @@ export enum SupportedArea {
 }
 
 export type SupportedAreaType = SupportedArea | string;
-/** Components deployed by the Operator. Part of the DSC Status. */
-export enum StackComponent {
-  CODE_FLARE = 'codeflare',
-  DS_PIPELINES = 'data-science-pipelines-operator',
-  K_SERVE = 'kserve',
-  MODEL_MESH = 'model-mesh',
-  // Bug: https://github.com/opendatahub-io/opendatahub-operator/issues/641
-  DASHBOARD = 'odh-dashboard',
-  RAY = 'ray',
-  WORKBENCHES = 'workbenches',
-  TRUSTY_AI = 'trustyai',
-  KUEUE = 'kueue',
-  TRAINING_OPERATOR = 'trainingoperator',
-  MODEL_REGISTRY = 'model-registry-operator',
-  FEAST_OPERATOR = 'feastoperator',
-  LLAMA_STACK_OPERATOR = 'llamastackoperator',
-}
 
 /** The possible component names that are used as keys in the `components` object of the DSC Status.
  * Each component's key (e.g., 'codeflare', 'dashboard', etc.) maps to a specific component status.
@@ -123,6 +107,7 @@ export enum DataScienceStackComponent {
   TRAINING_OPERATOR = 'trainingoperator',
   TRUSTY_AI = 'trustyai',
   WORKBENCHES = 'workbenches',
+  LLAMA_STACK_OPERATOR = 'llamastackoperator',
 }
 
 /** Capabilities of the Operator. Part of the DSCI Status. */
@@ -189,7 +174,7 @@ export type SupportedComponentFlagValue = {
        * can prevent the feature flag from enabling the item. Omit to not be reliant on a backend
        * component.
        */
-      requiredComponents: StackComponent[];
+      requiredComponents: DataScienceStackComponent[];
     }
   >
 >;

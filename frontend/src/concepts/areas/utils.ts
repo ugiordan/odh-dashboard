@@ -3,7 +3,7 @@ import {
   DataScienceClusterInitializationKindStatus,
   DataScienceClusterKindStatus,
 } from '#~/k8sTypes';
-import { IsAreaAvailableStatus, FeatureFlag, SupportedAreaType } from './types';
+import { IsAreaAvailableStatus, FeatureFlag, SupportedAreaType, DataScienceStackComponent  } from './types';
 import { definedFeatureFlags, SupportedAreasStateMap } from './const';
 
 export const isDefinedFeatureFlag = (key: string): key is FeatureFlag =>
@@ -80,13 +80,16 @@ export const isAreaAvailable = (
   const requiredComponentsState =
     requiredComponents && dscStatus
       ? requiredComponents.reduce<IsAreaAvailableStatus['requiredComponents']>(
-          (acc, component) => ({ ...acc, [component]: dscStatus.installedComponents?.[component] }),
+          (acc, component) => ({
+            ...acc,
+            [component]: dscStatus.components?.[component] || { managementState: 'Removed' },
+          }),
           {},
         )
       : null;
 
   const hasMetRequiredComponents = requiredComponentsState
-    ? Object.values(requiredComponentsState).every((v) => v)
+    ? Object.values(requiredComponentsState).every((v) => v.managementState === 'Managed')
     : true;
 
   const requiredCapabilitiesState =

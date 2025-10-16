@@ -49,6 +49,7 @@ import type { EnvironmentFromVariable } from '#~/pages/projects/types';
 import { SpawnerPageSectionID } from '#~/pages/projects/screens/spawner/types';
 import { AccessMode } from '#~/pages/storageClasses/storageEnums.ts';
 import { hardwareProfileSection } from '../../../../pages/components/HardwareProfileSection.ts';
+import { DataScienceStackComponent } from '#~/concepts/areas/types';
 
 const configYamlPath = '../../__mocks__/mock-upload-configmap.yaml';
 
@@ -165,8 +166,8 @@ const initIntercepts = ({
   cy.interceptOdh(
     'GET /api/dsc/status',
     mockDscStatus({
-      installedComponents: {
-        workbenches: true,
+      components: {
+        [DataScienceStackComponent.WORKBENCHES]: { managementState: 'Managed' },
       },
     }),
   );

@@ -1,12 +1,11 @@
 import { DataScienceClusterKindStatus, K8sCondition } from '#~/k8sTypes';
-import { DataScienceStackComponent, StackComponent } from '#~/concepts/areas/types';
+import { DataScienceStackComponent } from '#~/concepts/areas/types';
 import { DataScienceStackComponentMap } from '#~/concepts/areas/const';
 
 export type MockDscStatus = {
   components?: DataScienceClusterKindStatus['components'];
   conditions?: K8sCondition[];
   phase?: string;
-  installedComponents?: DataScienceClusterKindStatus['installedComponents'];
   release?: {
     name: string;
     version: string;
@@ -41,10 +40,6 @@ export const mockDscStatus = ({
       managementState: 'Managed',
     },
   },
-  installedComponents = Object.values(StackComponent).reduce(
-    (acc, component) => ({ ...acc, [component]: true }),
-    {},
-  ),
   conditions = [],
   phase = 'Ready',
   release = { name: 'Open Data Hub', version: '2.28.0' },
@@ -143,13 +138,6 @@ export const mockDscStatus = ({
     ],
     ...conditions,
   ],
-  installedComponents: Object.values(StackComponent).reduce(
-    (acc, component) => ({
-      ...acc,
-      [component]: installedComponents[component] ?? false,
-    }),
-    {},
-  ),
   phase,
   release,
 });
